@@ -55,4 +55,10 @@ export class DishdetailComponent implements OnInit {
     });
   }
 
+  onSubmit() {
+    this.com = this.ff.value;
+    console.log(this.com);
+    this.ff.reset();
+  }
+
 }
