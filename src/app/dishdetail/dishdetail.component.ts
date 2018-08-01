@@ -20,10 +20,30 @@ export class DishdetailComponent implements OnInit {
 
   dish: Dish;
   dishIds: number[];
+  dishcopy = null;
   prev: number;
   next: number;
   ff: FormGroup;
   com: Comment;
+
+  formErrors ={
+    'rating':'',
+    'comment':'',
+    'author':''
+  };
+
+  validationMessages ={
+    'rating':{
+
+    },
+    'comment':{
+    'required':'comment must be requireddd'
+    },
+    'author':{
+    'required':'author must be reuiorqq',
+    'minlength': 'name must be at least 2 characters long'
+    }
+  };
   
   constructor(private dishservice: DishService,
   private route: ActivatedRoute,
@@ -34,7 +54,7 @@ export class DishdetailComponent implements OnInit {
   ngOnInit() { 
     this.dishservice.getDishIds().subscribe(dishIds => this.dishIds = dishIds);
     this.route.params.pipe(switchMap((params: Params) => this.dishservice.getDish(+params['id'])))
-    .subscribe(dish => { this.dish = dish; this.setPrevNext(dish.id); });
+    .subscribe(dish => { this.dish = dish; this.dishcopy = dish; this.setPrevNext(dish.id); });
   }
 
   setPrevNext(dishId: number) {
@@ -49,19 +69,49 @@ export class DishdetailComponent implements OnInit {
 
   createForm() {
     this.ff = this.fb.group({
+    comment:['',Validators.required],
     rating: 5,
-    comment:['',Validators.required]
-    author:['', Validators.required],
+   
+    author:['', [Validators.required, Validators.minLength(2)]],
     });
+
+    this.ff.valueChanges
+     .subscribe(data => this.onValueChanged(data));
+
+     this.onValueChanged(); // (re)set form validaiton messages
+  }
+
+  onValueChanged(data?: any) {
+    if (!this.ff) { return; }
+    const form = this.ff;
+    for (const field in this.formErrors) {
+      if (this.formErrors.hasOwnProperty(field)) {
+        // clear previous error message (if any)
+        this.formErrors[field] = '';
+        const control = form.get(field);
+        if (control && control.dirty && !control.valid) {
+          const messages = this.validationMessages[field];
+          for (const key in control.errors) {
+            if (control.errors.hasOwnProperty(key)) {
+              this.formErrors[field] += messages[key] + ' ';
+            }
+          }
+        }
+      }
+    }
   }
 
   onSubmit() {
     this.com = this.ff.value;
+    this.com.date = new Date().toISOString();
     console.log(this.com);
+    this.dishcopy.comments.push(this.com);
+    this.dishcopy.save()
+    .subscribe(dish => {this.dish = dish; console.log(this.dish);});
     this.ff.reset({
     rating: 5,
     comment: '',
-    author''
+    author:''
     });
   }
 

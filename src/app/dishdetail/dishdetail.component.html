@@ -46,13 +46,15 @@
   <div [hidden]="dish">
     <mat-spinner></mat-spinner><h4>Loading..please wait</h4>
   </div>
-  <p>{{ff.value | json }} {{ff.status | json}} </p>
+  
   <div class="container">
   <form novalidate [formGroup]="ff" (ngSubmit)="onSubmit()">
+      <p class="half-width" *ngIf="!(ff.invalid)">{{ff.value | json }}
+      </p>
       <p>
         <mat-form-field class="half-width">
-          <input matInput formControlName="author" placeholder="Name" type="text">
-          <mat-error *ngIf="ff.get('author').hasError('required') && ff.get('author').touched"> name is required</mat-error>
+          <input matInput formControlName="author" placeholder="Name" type="text" required>
+          <mat-error *ngIf="formErrors.author">{{formErrors.author}}</mat-error>
         </mat-form-field>
       </p>
 
@@ -65,7 +67,7 @@
           <textarea matInput formControlName="comment" placeholder="Your feedback" rows=12>
             
           </textarea>
-          <mat-error *ngIf="ff.get('comment').hasError('required') && ff.get('comment').touched"> Comment is required</mat-error>
+          <mat-error *ngIf="formErrors.comment">{{formErrors.comment}}</mat-error>
         </mat-form-field>
       </p>
 
