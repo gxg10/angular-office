@@ -50,15 +50,19 @@ export class DishdetailComponent implements OnInit {
   createForm() {
     this.ff = this.fb.group({
     rating: 5,
-    comment:'',
-    author:'',
+    comment:['',Validators.required]
+    author:['', Validators.required],
     });
   }
 
   onSubmit() {
     this.com = this.ff.value;
     console.log(this.com);
-    this.ff.reset();
+    this.ff.reset({
+    rating: 5,
+    comment: '',
+    author''
+    });
   }
 
 }
