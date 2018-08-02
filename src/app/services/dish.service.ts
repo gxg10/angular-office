@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Dish } from '../shared/dish';
-import { Http, Response } from '@angular/http';
+import { DISHES } from '../shared/dishes';
 
 import { delay } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
@@ -14,8 +14,7 @@ import { baseURL } from '../shared/baseurl';
 })
 export class DishService {
 
-  constructor(private http: Http,
-  private processHTTPMsgService: ProcessHTTPMsgService) { }
+  constructor(private http: HttpClient) { }
 
   getDishes(): Observable<Dish[]> {
     return this.http.get<Dish[]>(baseURL + 'dishes');
